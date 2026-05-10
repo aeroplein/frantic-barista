@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cafe-bg: #FDF2F4;
+  --color-cafe-counter: #F5E6D3;
+  --color-cafe-outline: #BCAAA4;
+  --color-cafe-espresso: #A67B5B;
+  --color-cafe-oat: #FFF8E7;
+  --color-cafe-syrup: #FFB6C1;
+  --color-cafe-matcha: #C5E1A5;
+  --color-cafe-caramel: #D4A373;
+  --color-cafe-walnut: #6D4C41;
+  --color-cafe-success: #A5D6A7;
+  --color-cafe-error: #EF9A9A;
+  --color-cafe-text: #4E342E;
+}
+
+@font-face {
+  font-family: 'AuraSerif';
+  src: local('Playfair Display'), local('Georgia');
+}
+
+:root {
+  background-color: var(--color-cafe-bg);
+  color: #5D4037;
+  overflow: hidden;
+}
+
+#gameCanvas {
+  background: white;
+  border: 4px solid white;
+}
+
+#order-card {
+  z-index: 30;
+}
+
+#message-overlay {
+  z-index: 40;
+}
+
+kbd {
+  transition: all 0.1s ease;
+}
+
+kbd.active {
+  transform: translateY(2px);
+  border-bottom-width: 0;
+  background-color: #F8F8F8;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+  0% { transform: scale(1); border-color: #FFB6C1; }
+  50% { transform: scale(1.15); border-color: #E57373; box-shadow: 0 0 15px rgba(229, 115, 115, 0.3); }
+  100% { transform: scale(1); border-color: #FFB6C1; }
+}
+
+.low-patience-flash {
+  animation: timerPulse 0.6s ease-in-out infinite !important;
+  color: #E57373;
+  background-color: #FFF0F0;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.6; transform: scale(1); }
+}
+
+#message {
+  animation: pulse 2s infinite;
+}
