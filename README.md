@@ -14,7 +14,7 @@
 ---
 
 [**Play the Game (GitHub Pages)**](https://aeroplein.github.io/frantic-barista/)
-*(Link will be active after deployment)*
+
 
 </div>
 
