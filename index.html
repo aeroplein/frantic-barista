@@ -30,8 +30,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/frantic-barista/assets/index-DuBJ4bpN.js"></script>
-    <link rel="stylesheet" crossorigin href="/frantic-barista/assets/index-CNXUt1DR.css">
+    <script type="module" crossorigin src="/frantic-barista/assets/index-C_HJT2P_.js"></script>
+    <link rel="stylesheet" crossorigin href="/frantic-barista/assets/index-iLjYs8LH.css">
   </head>
   <body class="bg-[#FDF2F4] text-[#5D4037] font-sans selection:bg-[#FFB6C1]">
     <div id="game-container" class="w-full h-screen flex flex-col relative overflow-hidden transition-colors duration-[2000ms] ease-in-out">
@@ -92,6 +92,41 @@
 
         <!-- The Canvas -->
         <canvas id="gameCanvas" class="shadow-2xl rounded-2xl"></canvas>
+
+        <!-- Professor-facing computer graphics and data panel -->
+        <aside id="graphics-lab" class="absolute right-6 top-6 w-72 bg-white/80 backdrop-blur-md border border-[#BCAAA4]/30 rounded-2xl shadow-xl p-4 z-30 text-[#5D4037]">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-[10px] uppercase tracking-[0.24em] font-black text-[#A67B5B]">Graphics Lab</h2>
+              <p class="text-xs font-serif italic">Live course concepts</p>
+            </div>
+            <span id="lab-fps" class="font-mono text-xs font-bold bg-[#FDF2F4] px-2 py-1 rounded-md">60 FPS</span>
+          </div>
+
+          <dl class="grid grid-cols-[1fr_auto] gap-x-3 gap-y-2 text-[11px]">
+            <dt class="font-bold uppercase tracking-widest opacity-60">Raster Grid</dt>
+            <dd class="font-mono">800 x 450</dd>
+
+            <dt class="font-bold uppercase tracking-widest opacity-60">Update Model</dt>
+            <dd id="lab-state" class="font-mono text-right">waiting</dd>
+
+            <dt class="font-bold uppercase tracking-widest opacity-60">Order Entropy</dt>
+            <dd id="lab-entropy" class="font-mono">0.00 bits</dd>
+
+            <dt class="font-bold uppercase tracking-widest opacity-60">Packed Recipe</dt>
+            <dd id="lab-encoding" class="font-mono text-right max-w-32 truncate">-</dd>
+
+            <dt class="font-bold uppercase tracking-widest opacity-60">Compression</dt>
+            <dd id="lab-compression" class="font-mono text-right">0 -> 0</dd>
+          </dl>
+
+          <div class="mt-4 pt-3 border-t border-[#BCAAA4]/20 grid grid-cols-2 gap-2 text-[9px] uppercase tracking-widest font-black text-[#A67B5B]">
+            <span>Bezier cup art</span>
+            <span>Alpha particles</span>
+            <span>Gradient lighting</span>
+            <span>Clipped fluids</span>
+          </div>
+        </aside>
 
         <!-- Centered Overlay Messages / Landing Page -->
         <div id="landing-page" class="absolute inset-0 bg-[#FDF2F4] flex flex-col items-center justify-center z-50 transition-opacity duration-1000">
@@ -245,7 +280,6 @@
         <!-- Frame Decoration -->
         <div class="absolute top-0 left-0 w-full h-full pointer-events-none border-[12px] border-[#FDF2F4] z-10"></div>
       </footer>
-    </div>
+    </div>
   </body>
 </html>
-
