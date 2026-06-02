@@ -31,6 +31,10 @@ export default class Game {
     this.shakeIntensity = 0;
     this.currentLevelColor = '#FDF2F4';
     this.lastTime = performance.now();
+    this.lastDt = 16.67;
+    this.currentOrderEntropy = 0;
+    this.currentOrderEncoding = '';
+    this.currentOrderBytes = { raw: 0, packed: 0 };
     this.ownedItems = new Set();
     this.selectedPastry = null; // New state for bakery case
 
@@ -82,7 +86,7 @@ export default class Game {
     if (savedOrders) this.totalOrders = parseInt(savedOrders);
     if (savedLevel) {
       this.level = parseInt(savedLevel);
-      this.difficulty = 1 + (this.level - 1) * 0.2;
+      this.difficulty = this.getDifficultyForLevel(this.level);
     }
     if (savedOwned) {
       try {
@@ -94,6 +98,10 @@ export default class Game {
     }
     
     this.updateMoneyUI();
+  }
+
+  getDifficultyForLevel(level) {
+    return Math.min(2.0, 1 + (level - 1) * 0.12);
   }
 
   saveProgress() {
@@ -412,7 +420,72 @@ export default class Game {
     this.orderCard.classList.remove('hidden');
     document.getElementById('order-name').textContent = this.customer.orderName;
     document.getElementById('order-temp').textContent = this.customer.requiredTemperature.toUpperCase();
+    this.updateGraphicsLabMetrics();
     this.renderOrderUI();
+  }
+
+  calculateOrderEntropy(reqData) {
+    return Object.values(reqData).reduce((sum, amount) => {
+      if (amount <= 0) return sum;
+      return sum - amount * Math.log2(amount);
+    }, 0);
+  }
+
+  encodeOrder(reqData) {
+    const temperatureCode = this.customer.requiredTemperature === 'iced' ? 'I' : 'H';
+    const ingredientCodes = {
+      espresso: 'E',
+      oatMilk: 'O',
+      berrySyrup: 'B',
+      matcha: 'M',
+      caramel: 'C',
+      walnutSyrup: 'W',
+      almondMilk: 'A',
+      lavenderSyrup: 'L',
+      whippedCream: 'S'
+    };
+
+    const recipeTokens = Object.entries(reqData)
+      .filter(([, amount]) => amount > 0)
+      .map(([ingredient, amount]) => `${ingredientCodes[ingredient]}${Math.round(amount * 100)}`);
+
+    if (this.customer.requiredPastry) {
+      recipeTokens.push(`P:${this.customer.requiredPastry[0].toUpperCase()}`);
+    }
+
+    return `${temperatureCode}|${recipeTokens.join('|')}`;
+  }
+
+  updateGraphicsLabMetrics() {
+    if (!this.customer) return;
+
+    this.currentOrderEntropy = this.calculateOrderEntropy(this.customer.requiredIngredients);
+    this.currentOrderEncoding = this.encodeOrder(this.customer.requiredIngredients);
+
+    const rawRecipe = JSON.stringify({
+      temperature: this.customer.requiredTemperature,
+      ingredients: this.customer.requiredIngredients,
+      pastry: this.customer.requiredPastry
+    });
+
+    this.currentOrderBytes = {
+      raw: rawRecipe.length,
+      packed: this.currentOrderEncoding.length
+    };
+
+    const entropyEl = document.getElementById('lab-entropy');
+    const encodingEl = document.getElementById('lab-encoding');
+    const compressionEl = document.getElementById('lab-compression');
+    const stateEl = document.getElementById('lab-state');
+
+    if (entropyEl) entropyEl.textContent = `${this.currentOrderEntropy.toFixed(2)} bits`;
+    if (encodingEl) encodingEl.textContent = this.currentOrderEncoding;
+    if (compressionEl) {
+      compressionEl.textContent = `${this.currentOrderBytes.raw} chars -> ${this.currentOrderBytes.packed} chars`;
+    }
+    if (stateEl) {
+      stateEl.textContent = `${Object.keys(this.customer.requiredIngredients).filter(key => this.customer.requiredIngredients[key] > 0).length} ingredients, ${this.customer.requiredTemperature}`;
+    }
   }
 
   renderOrderUI() {
@@ -497,8 +570,8 @@ export default class Game {
         return;
       }
 
-      if (diff < 0.3) {
-        const isPerfect = diff < 0.1;
+      if (diff < 0.4) {
+        const isPerfect = diff < 0.14;
         if (isPerfect) {
           this.comboCount++;
           if (this.comboCount >= 3) {
@@ -541,7 +614,7 @@ export default class Game {
         const newLevel = Math.floor(this.totalMoney / 50) + 1;
         if (newLevel > this.level) {
           this.level = newLevel;
-          this.difficulty = 1 + (this.level - 1) * 0.2;
+          this.difficulty = this.getDifficultyForLevel(this.level);
           this.levelEl.textContent = this.level.toString().padStart(2, '0');
           this.triggerFeedback('LEVEL UP!');
         } else if (cupTotal > targetTotal * 1.1) {
@@ -622,6 +695,7 @@ export default class Game {
 
   update(dt) {
     if (this.state !== STATES.PLAYING) return;
+    this.lastDt = dt;
     
     // Update active pours
     if (this.activeIngredients.size > 0) {
@@ -638,15 +712,15 @@ export default class Game {
         diff += Math.abs(target - actual);
       });
       // Within 2% of perfection
-      this.isPerfect = diff < 0.03 && this.cup.getTotal() > 0.1;
+      this.isPerfect = diff < 0.05 && this.cup.getTotal() > 0.1;
 
       // Overfill detection
-      if (this.cup.getTotal() > this.targetTotal * 1.1 && !this.tooMuchTriggered) {
+      if (this.cup.getTotal() > this.targetTotal * 1.18 && !this.tooMuchTriggered) {
         this.triggerFeedback('TOO MUCH!');
         this.tooMuchTriggered = true;
         // Immediate patience penalty
         this.customer.patience -= 5;
-      } else if (this.cup.getTotal() <= this.targetTotal * 1.1) {
+      } else if (this.cup.getTotal() <= this.targetTotal * 1.18) {
         this.tooMuchTriggered = false;
       }
 
@@ -758,6 +832,9 @@ export default class Game {
     const patienceBar = document.getElementById('patience-bar');
     const pPercent = (this.customer.patience / this.customer.maxPatience) * 100;
     if (patienceBar) patienceBar.style.width = pPercent + '%';
+
+    const fpsEl = document.getElementById('lab-fps');
+    if (fpsEl) fpsEl.textContent = `${Math.round(1000 / Math.max(this.lastDt, 1))} FPS`;
   }
 
   updateLighting() {

@@ -1,67 +1,74 @@
-<div align="center">
+# Frantic Barista
 
-# ☕ Frantic Barista
-**Aesthetic Simulation • Precision Brewing • Specialty Coffee Boutique**
+**Computer Graphics course demo: visual rendering, game-loop logic, and compact data representation.**
 
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+Frantic Barista is a real-time 2D canvas simulation where the player prepares coffee orders by matching ingredient ratios, temperature, and optional pastries before customer patience expires. The project is designed to be playable, but it also exposes the computer graphics ideas behind the experience.
 
-<p align="center">
-  <em>"Precision meets peace in the city’s most curated coffee boutique."</em>
-</p>
+## Professor Demo Focus
 
----
+| Course idea | Where it appears in the project |
+| --- | --- |
+| 3D/2D visual pipeline analogy | The game maps mathematical state values into a fixed 800 x 450 canvas raster grid. |
+| Raster drawing | `Renderer.js` draws all visible shapes onto the HTML canvas. |
+| Curves and geometry | Cups, bows, croissants, pastries, gauges, and streams use arcs, quadratic curves, and Bezier curves. |
+| Color and shading | The scene uses gradients, alpha blending, shadows, glow, and time-based lighting transitions. |
+| Clipping and compositing | Cup shapes clip ingredient layers so the liquid appears inside the glass/cup body. |
+| Animation loop | `Game.loop()` uses `requestAnimationFrame()` and delta time to update simulation state separately from drawing. |
+| Interactive logic | Keyboard event listeners collect input, while `Cup.js` and `Customer.js` store mathematical state. |
+| Collision-style thresholds | Order validation compares actual vs. target ingredient vectors using tolerance thresholds. |
+| Procedural generation | `Customer.js` creates orders from level, difficulty, inventory, temperature, and pastry state. |
+| Information theory | A live "Graphics Lab" panel shows Shannon entropy for each generated order. |
+| Compression | The same panel compares verbose JSON order data with a compact symbolic recipe such as `I|E45|O35|B20`. |
 
 [**Play the Game (GitHub Pages)**](https://aeroplein.github.io/frantic-barista/)
 
+## Architecture
 
-</div>
+The project intentionally separates logic from rendering:
 
-## 🌸 About the Game
-**Frantic Barista** is a fast-paced, high-aesthetic simulation game built for the modern coffee enthusiast. Unlike traditional clicker games, Frantic Barista requires genuine precision and timing. 
+- `src/classes/Game.js` owns state, input, timing, scoring, progression, and the main loop.
+- `src/classes/Cup.js` stores drink geometry and ingredient percentages.
+- `src/classes/Customer.js` generates order requirements and patience decay.
+- `src/classes/Renderer.js` performs all canvas drawing.
+- `src/constants.js` stores colors, ingredient mappings, shop items, and key bindings.
+- `index.html` contains the HUD, controls, canvas, shop screen, and professor-facing live metrics panel.
 
-Step behind the counter and balance the art of the perfect pour with the chaos of the morning rush. Master complex botanical lattes and upgrade your boutique as you transition from the soft pinks of dawn to the indigo hues of the night shift.
+## Live Technical Panel
 
-## ✨ Key Features
-- **🎨 Dynamic Atmosphere**: A real-time lighting system that transitions through five distinct phases—from the soft **Morning Rush** to the golden **Afternoon Peak** and the moody **Night Shift**.
-- **☕ The Perfect Pour**: Real-time pouring mechanics. Match complex ingredient ratios down to the percentage.
-- **🥐 Boutique Upgrades**: Unlock premium artisanal ingredients like *Almond Milk*, *Lavender Syrup*, and fresh-baked pastries.
-- **⚡ Morning Rush**: Trigger a multiplier combo by serving perfect orders in a row to double your tips.
+During gameplay, the top-right **Graphics Lab** panel shows:
 
-## 🛠️ Technical Highlights
-*Developed for Academic Project Evaluation*
+- current FPS derived from frame delta time,
+- fixed canvas raster resolution,
+- active order state,
+- Shannon entropy of the required ingredient distribution,
+- compact recipe encoding,
+- raw JSON length vs. packed recipe length.
 
-- **State-Driven Rendering**: Custom `Renderer` class for high-performance 2D Canvas drawing, handling real-time fluid simulations and particle effects.
-- **Information Theory Logic**: Game difficulty scales based on "Order Entropy"—complexity increases as players level up, narrowing the margin for error.
-- **Procedural Generation**: Customers and orders are generated procedurally based on difficulty scaling and inventory state.
-- **Persistent Progress**: LocalStorage implementation for seamless save states.
+This gives a direct demonstration of how rendering, interaction, and information representation connect inside the same application.
 
-## 🎮 How to Play
+## How to Play
+
 | Key | Action |
-| :--- | :--- |
-| **E, O, B, M, C, W, A, L, S** | Pour Ingredients (Espresso, Milk, Syrups, etc.) |
-| **H / I** | Toggle Hot / Iced Mode |
-| **P** | Cycle through Pastries |
-| **SPACE** | Serve Order |
-| **T / DELETE** | Trash Current Cup (Reset) |
+| --- | --- |
+| `E`, `O`, `B`, `M`, `C`, `W`, `A`, `L`, `S` | Pour ingredients |
+| `H` / `I` | Select hot or iced mode |
+| `P` | Cycle pastry selection after unlocking the bakery case |
+| `SPACE` | Serve the order |
+| `T`, `DELETE`, `BACKSPACE` | Trash/reset the current cup |
 
-## 🚀 Installation & Local Development
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/aeroplein/frantic-barista.git
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+## Local Development
 
----
+```bash
+npm install
+npm run dev
+```
 
-<div align="center">
-  <p>Made with ❤️ for coffee lovers everywhere.</p>
-</div>
+Build for submission:
+
+```bash
+npm run build
+```
+
+## Short Presentation Script
+
+"Frantic Barista demonstrates computer graphics through a real-time canvas game. The mathematical state of the drink is stored separately from rendering: the cup contains ingredient percentages, temperature, ripple values, and ice positions, while the renderer converts that state into pixels using curves, gradients, clipping, alpha blending, and particles. The game loop uses `requestAnimationFrame` and delta time so state updates and drawing remain independent. Orders become more complex procedurally as the level increases, and the Graphics Lab panel shows the information-theory side by calculating entropy and comparing verbose order data with a compact encoded recipe."

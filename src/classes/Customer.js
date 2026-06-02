@@ -6,8 +6,8 @@ export default class Customer {
   constructor(canvasWidth, level = 1, scaling = 1, ownedItems = new Set()) {
     this.canvasWidth = canvasWidth;
 
-    // Procedural Scaling: Complexity increases with level
-    const baseComplexity = Math.min(6, 2 + Math.floor((level - 1) / 2));
+    // Procedural scaling: higher levels add variety without making orders unreadable.
+    const baseComplexity = Math.min(5, 2 + Math.floor((level - 1) / 3));
     const complexity = baseComplexity;
 
     // Procedural Ingredient Selection
@@ -70,15 +70,16 @@ export default class Customer {
 
     // Requirement: Multiple Challenges (Bakery Case)
     this.requiredPastry = null;
-    if (ownedItems.has('croissants') && Math.random() > 0.4) {
+    const pastryChance = level < 10 ? 0.35 : 0.5;
+    if (ownedItems.has('croissants') && Math.random() < pastryChance) {
       const pastries = ['croissant', 'cookie', 'muffin'];
       this.requiredPastry = pastries[Math.floor(Math.random() * pastries.length)];
     }
 
     // Patience settings in SECONDS
-    this.maxPatience = 30;
+    this.maxPatience = 36 + Math.min(level, 10);
     this.patience = this.maxPatience;
-    this.patienceDecay = 1.0 * scaling;
+    this.patienceDecay = Math.min(1.6, 0.85 * scaling);
 
     this.isSatisfied = false;
     this.isAngry = false;
@@ -97,4 +98,3 @@ export default class Customer {
 
   }
 }
-
