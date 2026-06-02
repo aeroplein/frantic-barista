@@ -29,6 +29,7 @@
 html,
 body {
   min-height: 100%;
+  margin: 0;
 }
 
 #game-container {
@@ -43,14 +44,17 @@ body {
   min-height: 5rem;
   gap: 1rem;
   overflow: visible;
+  padding-block: clamp(0.65rem, 1.4vw, 1rem);
 }
 
 #game-container > main {
   display: grid;
-  grid-template-columns: minmax(18rem, 22rem) minmax(0, 800px) minmax(18rem, 22rem);
+  grid-template-columns: minmax(18rem, 22rem) minmax(28rem, 800px) minmax(18rem, 22rem);
   align-items: center;
   justify-content: center;
-  column-gap: 1.5rem;
+  gap: clamp(1rem, 2vw, 2rem);
+  min-height: 0;
+  padding: clamp(1rem, 2vw, 1.75rem);
 }
 
 #gameCanvas {
@@ -60,21 +64,19 @@ body {
   grid-row: 1;
   width: 100%;
   max-width: min(800px, calc(100vw - 2rem));
-  max-height: calc(100dvh - 18rem);
+  max-height: min(450px, calc(100dvh - 17rem));
   height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
 }
 
 #order-card {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  transform: none !important;
-  translate: none !important;
+  position: relative;
   grid-column: 1;
   grid-row: 1;
   align-self: start;
-  justify-self: end;
-  width: min(22rem, 100%) !important;
+  justify-self: stretch;
+  width: min(22rem, 100%);
   margin-top: 0.5rem;
   border-radius: 1.5rem;
   z-index: 30;
@@ -127,10 +129,104 @@ kbd.active {
 }
 
 #graphics-lab {
-  max-height: calc(100vh - 10rem);
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  grid-column: 3;
+  grid-row: 1;
+  align-self: start;
+  justify-self: stretch;
+  width: min(22rem, 100%) !important;
+  max-height: calc(100dvh - 10rem);
+  overflow: auto;
 }
 
-@media (max-width: 1100px) {
+#landing-page,
+#shop-page,
+#message-overlay {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+#landing-page {
+  overflow-y: auto;
+  padding: clamp(1rem, 4vw, 2.5rem);
+}
+
+#landing-page > div {
+  max-width: min(58rem, 100%);
+}
+
+#landing-page h1 {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.95;
+}
+
+#landing-page .grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+#landing-page .grid > div {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+}
+
+#landing-page button,
+#shop-start-btn {
+  max-width: 100%;
+}
+
+#shop-page {
+  overflow-y: auto;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+#shop-page > div {
+  max-width: min(72rem, 100%);
+  padding: 0;
+}
+
+#shop-page > div > .flex:first-child {
+  gap: 1rem;
+}
+
+#shop-items-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+#game-container > footer {
+  height: auto;
+  min-height: clamp(8rem, 18dvh, 12rem);
+  padding: clamp(0.85rem, 2vw, 1.5rem);
+}
+
+#game-container > footer > .flex {
+  width: min(100%, 82rem);
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+  align-items: flex-start;
+}
+
+#game-container > footer kbd {
+  width: clamp(2.25rem, 3vw, 2.75rem);
+  height: clamp(2.25rem, 3vw, 2.75rem);
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+}
+
+#game-container > footer span {
+  max-width: 5.25rem;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+  text-align: center;
+}
+
+@media (max-width: 1500px) {
+  #game-container > main {
+    grid-template-columns: minmax(17rem, 22rem) minmax(28rem, 800px);
+  }
+
   #graphics-lab {
     display: none;
   }
@@ -168,6 +264,10 @@ kbd.active {
     flex: 1 1 18rem;
     justify-content: center;
   }
+
+  #game-container > main {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 800px);
+  }
 }
 
 @media (max-width: 900px) {
@@ -176,7 +276,7 @@ kbd.active {
   }
 
   #game-container > main {
-    grid-template-columns: minmax(0, min(800px, 100%));
+    grid-template-columns: minmax(0, 100%);
     align-content: start;
     row-gap: 0.75rem;
     min-height: 0;
@@ -193,7 +293,7 @@ kbd.active {
     grid-row: 1;
     align-self: auto;
     justify-self: center;
-    width: min(100%, 32rem) !important;
+    width: min(100%, 32rem);
     margin-top: 0;
   }
 
@@ -221,6 +321,7 @@ kbd.active {
   }
 
   #landing-page .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
   }
@@ -258,6 +359,16 @@ kbd.active {
   #game-container > footer .w-px {
     display: none;
   }
+
+  #shop-page > div > .flex:first-child {
+    align-items: stretch;
+    flex-direction: column;
+    margin-bottom: 2rem;
+  }
+
+  #shop-page > div > .flex:first-child > .text-right {
+    text-align: left;
+  }
 }
 
 @media (max-width: 640px) {
@@ -291,18 +402,83 @@ kbd.active {
     grid-template-columns: 1fr;
   }
 
+  #landing-page p {
+    letter-spacing: 0.18em;
+  }
+
   #landing-page button {
     width: min(100%, 18rem);
   }
 
   #order-card {
-    width: calc(100vw - 1.5rem);
+    width: min(100%, calc(100vw - 1.5rem));
     padding: 1rem;
     border-radius: 1.25rem;
+  }
+
+  #order-card > .flex {
+    gap: 0.75rem;
+  }
+
+  #order-name {
+    font-size: 1.1rem;
+    line-height: 1.15;
+  }
+
+  #order-ingredients {
+    gap: 0.35rem;
   }
 
   #gameCanvas {
     max-width: calc(100vw - 1rem);
     max-height: calc(100dvh - 20rem);
+  }
+
+  #shop-page {
+    padding: 1rem;
+  }
+
+  #shop-back-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 auto;
+  }
+
+  #shop-page h2 {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  #shop-start-btn {
+    width: min(100%, 20rem);
+    padding-inline: 1.25rem;
+  }
+}
+
+@media (max-width: 430px) {
+  #game-container > header > div:not(.absolute) {
+    gap: 0.75rem;
+  }
+
+  #shift-name {
+    font-size: 1.1rem;
+  }
+
+  #game-container > header span.text-xl,
+  #score {
+    font-size: 1.05rem;
+  }
+
+  #game-container > footer {
+    padding: 0.75rem 0.5rem;
+  }
+
+  #game-container > footer > .flex {
+    gap: 0.55rem;
+  }
+
+  #game-container > footer kbd {
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 0.9rem;
   }
 }
